@@ -1,0 +1,170 @@
+<html>
+    <head>
+        <script src="https://kit.fontawesome.com/ea5026738a.js" crossorigin="anonymous"></script>
+        <style>
+          #div-nav{
+                    width: 100%;
+                    height: 60px;
+                    
+                    display: flex;
+                }
+                .Y{
+                    color: red;
+                    font-size: 35px;
+                }
+                #div-f{
+                    width: 10%;
+                    height: 50px;
+                    padding: 10px;
+                    font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    font-weight: bold;
+                    font-size: 25px;
+                    display: flex;
+                  
+                }
+                #div-search{
+                width: 70%;
+                display: flex;
+                 height: 60px;
+                 padding: 5px;
+                 box-sizing: border-box;
+                }
+                #nav-icon{
+                    width: 20%;
+                   text-align: end;
+                    
+                    
+                }
+                input{
+                      height: 40px;
+                      width: 60%;
+                      border: solid 1px grey;
+                      font-size: 20px;
+                      margin-left:120px;
+                }
+                .s{
+                    font-size: 30px;
+                    background-color: white;
+               
+                }
+                #nav-icon>i{
+                    font-size: 20px;
+                    margin: 10px;
+                }
+                #div-search>div{
+                    height: 38px;
+                      width: 42px;
+                      border: solid 1px grey;
+                      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHG_mlSe0DG88MUouuUWrtOxuZMP5uxLiZnw&usqp=CAU");
+                      background-size: contain;
+                }
+                #main{
+                    display: flex;
+                    width: 100%;
+                    height: fit-content;
+                    background-color: rgb(248, 248, 248);
+                }
+            #left{
+                width: 70%;
+                height: fit-content;
+                padding: 20px;
+                padding-left: 40px;
+            }
+            #right{
+                width: 30%;
+                height: fit-content;
+                
+            }
+            #left>p{
+                font-size: 22px;
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }
+            #right>div>div:nth-child(1){
+                width: 50%;
+                height: 130px;
+                padding: 10px;
+                box-sizing: border-box;
+            }   
+            #right>div>div:nth-child(2){
+                width: 50%;
+                height: 130px;
+            }  
+            #right>div>div:nth-child(2)>p{
+             font-size: 16px;
+             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            }  
+            #right>div{
+                display: flex;               
+            }   
+            #right>div>div:nth-child(1)>img{
+                width: 100%;
+                height: 100%;
+            }  
+            iframe{
+                border: none;
+            } 
+        </style>
+    </head>
+    <body>
+        <div id="div-nav"><div id="div-f"><i class="fab fa-youtube Y"></i>YouTube</div>
+        <div id="div-search"><input type="text" id="name" placeholder="Search"><div id="search" onclick="Search()"></div></div>
+        <div id="nav-icon"><i class="fas fa-video"></i><i class="fas fa-th"></i><i class="far fa-bell"></i></div>
+        </div>
+       <div id="main">
+           <div id="left"></div>
+           <div id="right"></div>
+       </div>
+    </body>
+</html>
+<script>
+    window.addEventListener('load',()=>{
+        var id=JSON.parse(localStorage.getItem("videoId"));
+        displayiframe(id)
+        let url="https://youtube.googleapis.com/youtube/v3/search?q=the most popular videos in India&key=AIzaSyAOVE76Kbn4PqyLMkexV7WBFI7BCflwNvE&maxResults=20&part=snippet";
+        fetch(url).then((res)=>{
+            res.json().then((res)=>{
+                let data=res.items;
+                console.log(data)
+                 displayright(data)
+            })
+        })
+    })
+    function displayiframe(data){
+        let iframe=document.createElement('iframe')
+          iframe.src=`https://www.youtube.com/embed/${data.videoId}`;
+          iframe.width="95%";
+          iframe.height="450px";
+          iframe.setAttribute('allowfullscreen',true)
+          var video=document.getElementById('left')
+          var title=document.createElement("p")
+          title.textContent=data.snippet;
+          video.append(iframe,title)
+    }
+    function displayright(data){
+        document.getElementById('right').innerHTML=null;
+      data.map(({snippet:{thumbnails},snippet,id:{videoId}})=>{
+          let div=document.createElement('div')
+          let div1=document.createElement('div')
+          let div2=document.createElement('div')
+          div.addEventListener('click',()=>{
+            let video_data={
+                  snippet:snippet.title,
+                  videoId:videoId,
+              }
+              localStorage.setItem("videoId",JSON.stringify(video_data))
+              location.href="youtube2.html"
+          })
+         let img =document.createElement('img')
+         img.src=thumbnails.high.url;
+          console.log(thumbnails.high.url)
+          let title=document.createElement('p');
+          title.textContent=snippet.title;
+          console.log(title)
+          div1.append(img)
+          div2.append(title)
+          div.append(div1,div2)
+          var you=document.getElementById('right')
+          you.append(div)
+      })
+    }
+</script>
